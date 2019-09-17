@@ -91,6 +91,7 @@ app.post('/api/courses', (req, res) => {
   //     .send('Name is required and shoud be minimum 3 character long');
   // }
 
+  /* DON'T NEED THIS USE THE SIMPLYFY VERSION
   const schema = {
     name: Joi.string()
       .min(3)
@@ -98,6 +99,14 @@ app.post('/api/courses', (req, res) => {
   };
 
   const result = Joi.validate(req.body, schema);
+  */
+
+  const { error } = validateCourse(req.body);
+  if (error) {
+    res.status(400).send(error.details[0].message);
+    return;
+  }
+
   /*
     IN - http://localhost:3000/api/courses 
     Then select the body as a request raw. In the drop text drop down select JSON(applicaiton/json)
@@ -131,12 +140,12 @@ app.post('/api/courses', (req, res) => {
         catch: [Function: catch] 
       }
   */
-  console.log(result);
+  // console.log(result);
 
-  if (result.error) {
-    //400 Bad Request
-    //res.status(400).send(result.error); /* Too complex we can simplyfy*/
-    /* 
+  // if (result.error) {
+  //400 Bad Request
+  //res.status(400).send(result.error); /* Too complex we can simplyfy*/
+  /* 
       In - {
             "name": "a"
            }
@@ -145,9 +154,9 @@ app.post('/api/courses', (req, res) => {
       In - {}
       Out - "name" is required
     */
-    res.status(400).send(result.error.details[0].message);
-    return;
-  }
+  // res.status(400).send(result.error.details[0].message);
+  // return;
+  // }
   const course = {
     id: courses.length + 1,
     name: req.body.name
@@ -156,5 +165,74 @@ app.post('/api/courses', (req, res) => {
   res.send(course);
 });
 
+/*
+    IN - http://localhost:3000/api/courses/1 MEHTOD - PUT
+    Then select the body as a request raw. In the drop text drop down select JSON(applicaiton/json)
+    CORRECT INPUT
+    {
+      "name": "new course"
+    }
+    OUT - id one course will be updatede to new course
+      {
+        "id": 1,
+        "name": "new course"
+      }
+
+    IN - http://localhost:3000/api/courses/10 MEHTOD - PUT
+    Then select the body as a request raw. In the drop text drop down select JSON(applicaiton/json)
+    CORRECT INPUT
+    {
+      "name": "new course"
+    }
+    OUT - The course with the given ID was not found
+
+    IN - http://localhost:3000/api/courses/1 MEHTOD - PUT
+    Then select the body as a request raw. In the drop text drop down select JSON(applicaiton/json)
+    CORRECT INPUT
+    {
+      "name": "new course"
+    }
+    OUT - The course with the given ID was not found
+
+*/
+app.put('/api/courses/:id', (req, res) => {
+  //Look up the course
+  //If not existing, return 404
+  const course = courses.find(c => c.id === parseInt(req.params.id));
+  if (!course)
+    res.status(404).send('The course with the given ID was not found');
+  //Validate
+  //If invalid, return 400 - Bad request
+
+  /*
+  const result = validateCourse(req.body); //Simplyfy by object redestruction
+  
+  if (result.error) {
+    res.status(400).send(result.error.details[0].message);
+    return;
+  }
+  */
+  //object redestruction
+  const { error } = validateCourse(req.body);
+  if (error) {
+    res.status(400).send(error.details[0].message);
+    return;
+  }
+
+  //Update course
+  course.name = req.body.name;
+  // Return the update course
+  res.send(course);
+});
+
+function validateCourse(course) {
+  const schema = {
+    name: Joi.string()
+      .min(3)
+      .required()
+  };
+
+  return Joi.validate(course, schema);
+}
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}..`));
