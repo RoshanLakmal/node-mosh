@@ -83,85 +83,20 @@ app.get('/api/posts/:year/:month', (req, res) => {
       - With 400 Bad request
 */
 app.post('/api/courses', (req, res) => {
-  /*  This error handling is very bad use joi instead*/
-  // if (!req.body.name || req.body.name.length < 3) {
-  //   //400 Bad Request
-  //   res
-  //     .status(400)
-  //     .send('Name is required and shoud be minimum 3 character long');
-  // }
-
-  /* DON'T NEED THIS USE THE SIMPLYFY VERSION
-  const schema = {
-    name: Joi.string()
-      .min(3)
-      .required()
-  };
-
-  const result = Joi.validate(req.body, schema);
-  */
-
   const { error } = validateCourse(req.body);
+
   if (error) {
     res.status(400).send(error.details[0].message);
     return;
   }
 
-  /*
-    IN - http://localhost:3000/api/courses 
-    Then select the body as a request raw. In the drop text drop down select JSON(applicaiton/json)
-    CORRECT INPUT
-    {
-      "name": "name"
-    }
-    OUT IN CONSOLE FOR result
-      { error: null,
-        value: { name: 'name' },
-        then: [Function: then],
-        catch: [Function: catch] 
-      }
-
-
-      IN - http://localhost:3000/api/courses 
-    Then select the body as a request raw. In the drop text drop down select JSON(applicaiton/json)
-    INCORRECT INPUT
-    {
-      "name": "a"
-    }
-    OUT IN CONSOLE FOR result
-      { error: { ValidationError: child "name" fails because ["name" length must be at least 3 characters long].........,
-        isJoi: true,
-        name: 'ValidationError',
-        details: [ [Object] ],
-        _object: { name: 'a' },
-        annotate: [Function] },
-        value: { name: 'a' },
-        then: [Function: then],
-        catch: [Function: catch] 
-      }
-  */
-  // console.log(result);
-
-  // if (result.error) {
-  //400 Bad Request
-  //res.status(400).send(result.error); /* Too complex we can simplyfy*/
-  /* 
-      In - {
-            "name": "a"
-           }
-      Out - "name" length must be at least 3 characters long
-
-      In - {}
-      Out - "name" is required
-    */
-  // res.status(400).send(result.error.details[0].message);
-  // return;
-  // }
   const course = {
     id: courses.length + 1,
     name: req.body.name
   };
+
   courses.push(course);
+
   res.send(course);
 });
 
@@ -196,45 +131,28 @@ app.post('/api/courses', (req, res) => {
 
 */
 app.put('/api/courses/:id', (req, res) => {
-  //Look up the course
-  //If not existing, return 404
   const course = courses.find(c => c.id === parseInt(req.params.id));
+
   if (!course)
     return res.status(404).send('The course with the given ID was not found');
-  //Validate
-  //If invalid, return 400 - Bad request
 
-  /*
-  const result = validateCourse(req.body); //Simplyfy by object redestruction
-  
-  if (result.error) {
-    res.status(400).send(result.error.details[0].message);
-    return;
-  }
-  */
-  //object redestruction
   const { error } = validateCourse(req.body);
+
   if (error) {
     res.status(400).send(error.details[0].message);
     return;
   }
 
-  //Update course
   course.name = req.body.name;
-  // Return the update course
   res.send(course);
 });
 
 app.delete('/api/courses/:id', (req, res) => {
-  //Look up the course
-  //Not existing return 404
   const course = courses.find(c => c.id === parseInt(req.params.id));
   if (!course)
     return res.status(404).send('The course with the given ID was not found');
-  //Delete
   const index = courses.indexOf(course);
   courses.splice(index, 1);
-  //Return the same course
   res.send(course);
 });
 
