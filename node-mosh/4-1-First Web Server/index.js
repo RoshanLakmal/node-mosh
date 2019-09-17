@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+app.use(express.json());
 
 const courses = [
   { id: 1, name: 'course1' },
@@ -59,6 +60,26 @@ app.get('/api/posts/:year/:month', (req, res) => {
 */
 app.get('/api/posts/:year/:month', (req, res) => {
   res.send(req.query);
+});
+
+/* Use postman to test this METHOD = POST
+  IN - http://localhost:3000/api/courses
+  Then select the body as a request raw. In the drop text drop down select JSON(applicaiton/json)
+  {
+    "name": "new course"
+  }
+  OUT - {
+          "id": 4,
+          "name": "new course"
+        }
+*/
+app.post('/api/courses', (req, res) => {
+  const course = {
+    id: courses.length + 1,
+    name: req.body.name
+  };
+  courses.push(course);
+  res.send(course);
 });
 
 const port = process.env.PORT || 3000;
