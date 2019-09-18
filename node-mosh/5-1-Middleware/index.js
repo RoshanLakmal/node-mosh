@@ -1,3 +1,4 @@
+const config = require('config');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const Joi = require('joi');
@@ -9,6 +10,10 @@ app.use(express.json()); // req.body
 app.use(express.urlencoded({ extended: true })); //key=value&key=value
 app.use(express.static('public')); //store static assests (http://localhost:3000/readme.txt - static content server from the root of the site)
 app.use(helmet());
+
+// Configuration
+console.log('Application Name: ' + config.get('name'));
+console.log('Mail Server: ' + config.get('mail.host'));
 
 //cmd - exprt NODE_ENV = production
 //      export NODE_ENV=development
