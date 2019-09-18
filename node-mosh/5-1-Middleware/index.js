@@ -9,7 +9,13 @@ app.use(express.json()); // req.body
 app.use(express.urlencoded({ extended: true })); //key=value&key=value
 app.use(express.static('public')); //store static assests (http://localhost:3000/readme.txt - static content server from the root of the site)
 app.use(helmet());
-app.use(morgan('tiny'));
+
+//cmd - exprt NODE_ENV = production
+//      export NODE_ENV=development
+if (app.get('env') === 'development') {
+  app.use(morgan('tiny'));
+  console.log('Morgan enabled...');
+}
 
 app.use(logger); //Middleware function (called in squence - logger)
 
