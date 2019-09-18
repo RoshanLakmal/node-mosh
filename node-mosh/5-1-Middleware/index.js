@@ -11,9 +11,14 @@ app.use(express.urlencoded({ extended: true })); //key=value&key=value
 app.use(express.static('public')); //store static assests (http://localhost:3000/readme.txt - static content server from the root of the site)
 app.use(helmet());
 
-// Configuration
+// Configuration change accordingly to exprt NODE_ENV varialbe
+// config/default.json, development.json, production.json
 console.log('Application Name: ' + config.get('name'));
 console.log('Mail Server: ' + config.get('mail.host'));
+
+//adding sensitive data cmd - export app_password=1234
+// config/custom-enviornment-variables.json
+console.log('Mail Password: ' + config.get('mail.password'));
 
 //cmd - exprt NODE_ENV = production
 //      export NODE_ENV=development
