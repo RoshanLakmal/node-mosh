@@ -8,6 +8,10 @@ const logger = require('./logger');
 const express = require('express');
 const app = express();
 
+//Pug, Mustache, EJS
+app.set('view engine', 'pug');
+app.set('views', './views'); //default
+
 app.use(express.json()); // req.body
 app.use(express.urlencoded({ extended: true })); //key=value&key=value
 app.use(express.static('public')); //store static assests (http://localhost:3000/readme.txt - static content server from the root of the site)
@@ -22,6 +26,8 @@ if (app.get('env') === 'development') {
   // cmd      - export DEBUG=app:startup,app:db
   // cmd      - export DEBUG=app:*
   // Reseting - export DEBUG=
+
+  //cmd - DEBUG=app:db npx nodemon
   startupDebugger('Morgan enabled...');
 }
 
@@ -46,7 +52,8 @@ const courses = [
 ];
 
 app.get('/', (req, res) => {
-  res.send('Hello World');
+  // res.send('Hello World');
+  res.render('index', { title: 'My Express App', message: 'Hello' });
 });
 
 app.get('/api/courses', (req, res) => {
