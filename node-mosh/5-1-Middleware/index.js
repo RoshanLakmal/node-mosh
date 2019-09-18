@@ -4,6 +4,8 @@ const express = require('express');
 const app = express();
 app.use(express.json()); // req.body
 app.use(express.urlencoded({ extended: true })); //key=value&key=value
+app.use(express.static('public')); //store static assests (http://localhost:3000/readme.txt - static content server from the root of the site)
+
 app.use(logger); //Middleware function (called in squence - logger)
 
 const courses = [
